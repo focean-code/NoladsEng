@@ -194,22 +194,16 @@ const ModernNavBar = () => {
 
                 {/* Enhanced Dropdown Menu */}
                 {item.dropdown && activeDropdown === item.label && (
-                  <div className="absolute top-full left-0 mt-2 w-72 bg-blue-900/95 backdrop-blur-lg rounded-xl shadow-2xl border-2 border-yellow-400/50 py-3 animate-slide-in-down overflow-hidden">
-                    {/* Dropdown background glow */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/10 via-transparent to-blue-400/10" />
+                  <div className="absolute top-full left-0 mt-2 w-72 bg-blue-900/95 backdrop-blur-lg rounded-xl shadow-xl border border-yellow-400/30 py-2 transition-opacity duration-200 overflow-hidden">
                     
                     {item.dropdown.map((dropdownItem, dropdownIndex) => (
                       <Link
                         key={dropdownItem.label}
                         to={dropdownItem.href}
-                        className="group relative block px-5 py-3 text-sm text-blue-100 hover:text-yellow-400 hover:bg-blue-800/80 transition-all duration-300 animate-fade-in-left"
-                        style={{ animationDelay: `${dropdownIndex * 50}ms` }}
+                        className="block px-4 py-2 text-sm text-blue-100 hover:text-yellow-400 hover:bg-blue-800/60 transition-colors duration-150 rounded-lg mx-2"
                         onClick={() => setActiveDropdown(null)}
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="w-2 h-2 bg-yellow-400 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 scale-0 group-hover:scale-100" />
-                          <div className="font-medium group-hover:font-semibold transition-all duration-300">{dropdownItem.label}</div>
-                        </div>
+                        {dropdownItem.label}
                       </Link>
                     ))}
                   </div>
