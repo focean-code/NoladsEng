@@ -265,10 +265,8 @@ const ModernNavBar = () => {
           <div className="container py-6 relative z-10" ref={mobileMenuRef}>
             <div className="space-y-2">
               {navItems.map((item, index) => (
-                <div 
-                  key={item.label} 
-                  className="animate-fade-in-left"
-                  style={{ animationDelay: `${index * 100}ms` }}
+                <div
+                  key={item.label}
                 >
                   {item.href.startsWith("#") ? (
                     <a
