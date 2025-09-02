@@ -37,34 +37,64 @@ function formatResponse<T>(data: T | null, error: any = null): ApiResponse<T> {
 class SupabaseApiClient {
   // Services
   services = {
-    getAll: async (params?: { 
-      page?: number; 
-      limit?: number; 
-      search?: string; 
-      category?: string; 
-      active?: boolean 
+    getAll: async (params?: {
+      page?: number;
+      limit?: number;
+      search?: string;
+      category?: string;
+      active?: boolean
     }): Promise<ApiResponse<Service[]>> => {
       try {
         let query = supabase.from('services').select('*')
-        
+
         if (params?.active !== undefined) {
           query = query.eq('is_active', params.active)
         }
-        
+
         if (params?.category) {
           query = query.eq('category', params.category)
         }
-        
+
         if (params?.search) {
           query = query.or(`name.ilike.%${params.search}%,description.ilike.%${params.search}%`)
         }
-        
+
         if (params?.limit) {
           const offset = ((params?.page || 1) - 1) * params.limit
           query = query.range(offset, offset + params.limit - 1)
         }
-        
+
         const { data, error } = await query.order('created_at', { ascending: false })
+
+        // If table doesn't exist, fall back to mock data
+        if (error && error.code === 'PGRST116') {
+          console.warn('Services table not found, using mock data. Please run the database schema.')
+          let filteredServices = mockServices
+
+          if (params?.active !== undefined) {
+            filteredServices = filteredServices.filter(s => s.is_active === params.active)
+          }
+
+          if (params?.category) {
+            filteredServices = filteredServices.filter(s => s.category === params.category)
+          }
+
+          if (params?.search) {
+            const searchTerm = params.search.toLowerCase()
+            filteredServices = filteredServices.filter(s =>
+              s.name.toLowerCase().includes(searchTerm) ||
+              s.description?.toLowerCase().includes(searchTerm)
+            )
+          }
+
+          if (params?.limit) {
+            const offset = ((params?.page || 1) - 1) * params.limit
+            filteredServices = filteredServices.slice(offset, offset + params.limit)
+          }
+
+          return formatResponse(filteredServices)
+        }
+
         return formatResponse(data, error)
       } catch (error) {
         return formatResponse(null, error)
@@ -78,12 +108,23 @@ class SupabaseApiClient {
           .select('*')
           .eq('is_active', true)
           .order('created_at', { ascending: false })
-        
+
         if (limit) {
           query = query.limit(limit)
         }
-        
+
         const { data, error } = await query
+
+        // If table doesn't exist, fall back to mock data
+        if (error && error.code === 'PGRST116') {
+          console.warn('Services table not found, using mock data. Please run the database schema.')
+          let services = mockServices.filter(s => s.is_active)
+          if (limit) {
+            services = services.slice(0, limit)
+          }
+          return formatResponse(services)
+        }
+
         return formatResponse(data, error)
       } catch (error) {
         return formatResponse(null, error)
