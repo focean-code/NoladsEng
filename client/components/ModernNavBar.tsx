@@ -15,7 +15,7 @@ const ModernNavBar = () => {
   const location = useLocation();
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  
+
   // Use global state for mobile menu
   const { isMobileMenuOpen, setMobileMenuOpen } = useAppStore();
 
@@ -31,7 +31,7 @@ const ModernNavBar = () => {
   // Handle keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         setActiveDropdown(null);
         if (isMobileMenuOpen) {
           setMobileMenuOpen(false);
@@ -39,8 +39,8 @@ const ModernNavBar = () => {
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isMobileMenuOpen, setMobileMenuOpen]);
 
   // Trap focus in mobile menu
@@ -51,18 +51,22 @@ const ModernNavBar = () => {
     }
   }, [isMobileMenuOpen]);
 
-  const [serviceDropdown, setServiceDropdown] = useState<{ label: string; href: string }[]>([]);
+  const [serviceDropdown, setServiceDropdown] = useState<
+    { label: string; href: string }[]
+  >([]);
   useEffect(() => {
     const fetchServices = async () => {
       try {
         // Only fetch active services for the dropdown
-        const response = await import("../lib/api").then(m => m.api.services.getAll({ active: true }));
+        const response = await import("../lib/api").then((m) =>
+          m.api.services.getAll({ active: true }),
+        );
         if (response.success && response.data) {
           setServiceDropdown(
             response.data.map((service: any) => ({
               label: service.name,
               href: `/services/${service.id}`,
-            }))
+            })),
           );
         } else {
           setServiceDropdown([]);
@@ -156,13 +160,13 @@ const ModernNavBar = () => {
                   >
                     {/* Background glow on hover */}
                     <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-blue-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    
+
                     <span className="relative z-10">{item.label}</span>
                     {item.dropdown && (
                       <ChevronDown
                         className={cn(
                           "w-4 h-4 transition-transform duration-200 relative z-10",
-                          activeDropdown === item.label ? "rotate-180" : ""
+                          activeDropdown === item.label ? "rotate-180" : "",
                         )}
                       />
                     )}
@@ -179,13 +183,13 @@ const ModernNavBar = () => {
                   >
                     {/* Background glow on hover */}
                     <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-blue-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    
+
                     <span className="relative z-10">{item.label}</span>
                     {item.dropdown && (
                       <ChevronDown
                         className={cn(
                           "w-4 h-4 transition-transform duration-200 relative z-10",
-                          activeDropdown === item.label ? "rotate-180" : ""
+                          activeDropdown === item.label ? "rotate-180" : "",
                         )}
                       />
                     )}
@@ -195,7 +199,6 @@ const ModernNavBar = () => {
                 {/* Enhanced Dropdown Menu */}
                 {item.dropdown && activeDropdown === item.label && (
                   <div className="absolute top-full left-0 mt-2 w-72 bg-blue-900/95 backdrop-blur-lg rounded-xl shadow-xl border border-yellow-400/30 py-2 transition-opacity duration-200 overflow-hidden">
-                    
                     {item.dropdown.map((dropdownItem, dropdownIndex) => (
                       <Link
                         key={dropdownItem.label}
@@ -215,22 +218,22 @@ const ModernNavBar = () => {
           {/* Enhanced Desktop CTA */}
           <div className="hidden lg:flex items-center space-x-3 animate-fade-in-right">
             <Link to="/admin">
-              <ModernButton 
-                variant="ghost" 
-                size="sm" 
+              <ModernButton
+                variant="ghost"
+                size="sm"
                 className="bg-yellow-500 hover:bg-yellow-400 text-blue-900 font-bold transition-all duration-300 hover:shadow-lg hover:shadow-yellow-400/30"
               >
                 Admin Page
               </ModernButton>
             </Link>
-            <ModernButton 
-              variant="primary" 
+            <ModernButton
+              variant="primary"
               size="sm"
               type="button"
               className="bg-gradient-to-r from-blue-700 to-blue-600 hover:from-blue-600 hover:to-blue-500 border-2 border-blue-500 hover:border-yellow-400 transition-all duration-300 hover:shadow-lg hover:shadow-blue-400/30"
               onClick={(e) => {
                 e.stopPropagation();
-                console.log('Opening quote modal...');
+                console.log("Opening quote modal...");
                 setIsQuoteModalOpen(true);
               }}
             >
@@ -249,7 +252,7 @@ const ModernNavBar = () => {
             ) : (
               <Menu className="w-6 h-6 text-white transition-all duration-300 group-hover:scale-110" />
             )}
-            
+
             {/* Button glow effect */}
             <div className="absolute inset-0 bg-yellow-400/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
           </button>
@@ -261,13 +264,11 @@ const ModernNavBar = () => {
         <div className="lg:hidden border-t border-yellow-400/50 bg-blue-900/95 backdrop-blur-lg animate-slide-in-down relative overflow-hidden">
           {/* Mobile menu background glow */}
           <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/5 via-transparent to-blue-400/5" />
-          
+
           <div className="container py-6 relative z-10" ref={mobileMenuRef}>
             <div className="space-y-2">
               {navItems.map((item, index) => (
-                <div
-                  key={item.label}
-                >
+                <div key={item.label}>
                   {item.href.startsWith("#") ? (
                     <a
                       href={item.href}
@@ -281,7 +282,7 @@ const ModernNavBar = () => {
                     >
                       {/* Hover glow effect */}
                       <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-blue-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      
+
                       <span className="relative z-10 flex items-center justify-between">
                         {item.label}
                         <div className="w-2 h-2 bg-yellow-400 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 scale-0 group-hover:scale-100" />
@@ -300,7 +301,7 @@ const ModernNavBar = () => {
                     >
                       {/* Hover glow effect */}
                       <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-blue-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      
+
                       <span className="relative z-10 flex items-center justify-between">
                         {item.label}
                         <div className="w-2 h-2 bg-yellow-400 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 scale-0 group-hover:scale-100" />
@@ -316,12 +317,16 @@ const ModernNavBar = () => {
                           key={dropdownItem.label}
                           to={dropdownItem.href}
                           className="group relative block px-4 py-3 text-sm text-blue-200 hover:text-yellow-400 hover:bg-blue-800/60 rounded-lg transition-all duration-300 hover:translate-x-1 animate-fade-in-right"
-                          style={{ animationDelay: `${(index + 1) * 100 + dropdownIndex * 50}ms` }}
+                          style={{
+                            animationDelay: `${(index + 1) * 100 + dropdownIndex * 50}ms`,
+                          }}
                           onClick={() => setMobileMenuOpen(false)}
                         >
                           <div className="flex items-center gap-2">
                             <div className="w-1.5 h-1.5 bg-yellow-400/50 rounded-full group-hover:bg-yellow-400 transition-colors duration-300" />
-                            <span className="group-hover:font-medium transition-all duration-300">{dropdownItem.label}</span>
+                            <span className="group-hover:font-medium transition-all duration-300">
+                              {dropdownItem.label}
+                            </span>
                           </div>
                         </Link>
                       ))}
@@ -352,7 +357,7 @@ const ModernNavBar = () => {
                   onClick={(e) => {
                     e.stopPropagation();
                     setMobileMenuOpen(false);
-                    console.log('Opening quote modal from mobile menu...');
+                    console.log("Opening quote modal from mobile menu...");
                     setIsQuoteModalOpen(true);
                   }}
                 >
@@ -368,7 +373,7 @@ const ModernNavBar = () => {
       <QuoteRequestModal
         isOpen={isQuoteModalOpen}
         onClose={() => {
-          console.log('Closing quote modal...');
+          console.log("Closing quote modal...");
           setIsQuoteModalOpen(false);
         }}
         items={[]}
@@ -378,7 +383,7 @@ const ModernNavBar = () => {
             await api.quotes.create(data);
             setIsQuoteModalOpen(false);
           } catch (error) {
-            console.error('Error submitting quote:', error);
+            console.error("Error submitting quote:", error);
           }
         }}
       />
