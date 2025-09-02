@@ -1,6 +1,7 @@
 import { supabase } from './supabase'
-import type { 
-  ApiResponse, 
+import { mockServices, mockProducts, mockCompanyStats } from './mock-data'
+import type {
+  ApiResponse,
   User, CreateUser,
   Service, CreateService,
   Product, CreateProduct,
