@@ -138,8 +138,7 @@ const ModernNavBar = () => {
             {navItems.map((item, index) => (
               <div
                 key={item.label}
-                className="relative animate-fade-in-up"
-                style={{ animationDelay: `${200 + (index * 100)}ms` }}
+                className="relative"
                 onMouseEnter={() =>
                   item.dropdown && setActiveDropdown(item.label)
                 }
@@ -160,11 +159,11 @@ const ModernNavBar = () => {
                     
                     <span className="relative z-10">{item.label}</span>
                     {item.dropdown && (
-                      <ChevronDown 
+                      <ChevronDown
                         className={cn(
-                          "w-4 h-4 transition-all duration-300 relative z-10",
-                          activeDropdown === item.label ? "rotate-180 text-yellow-400" : ""
-                        )} 
+                          "w-4 h-4 transition-transform duration-200 relative z-10",
+                          activeDropdown === item.label ? "rotate-180" : ""
+                        )}
                       />
                     )}
                   </a>
@@ -183,11 +182,11 @@ const ModernNavBar = () => {
                     
                     <span className="relative z-10">{item.label}</span>
                     {item.dropdown && (
-                      <ChevronDown 
+                      <ChevronDown
                         className={cn(
-                          "w-4 h-4 transition-all duration-300 relative z-10",
-                          activeDropdown === item.label ? "rotate-180 text-yellow-400" : ""
-                        )} 
+                          "w-4 h-4 transition-transform duration-200 relative z-10",
+                          activeDropdown === item.label ? "rotate-180" : ""
+                        )}
                       />
                     )}
                   </Link>
