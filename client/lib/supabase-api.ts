@@ -194,34 +194,64 @@ class SupabaseApiClient {
 
   // Products
   products = {
-    getAll: async (params?: { 
-      page?: number; 
-      limit?: number; 
-      search?: string; 
-      category?: string; 
-      active?: boolean 
+    getAll: async (params?: {
+      page?: number;
+      limit?: number;
+      search?: string;
+      category?: string;
+      active?: boolean
     }): Promise<ApiResponse<Product[]>> => {
       try {
         let query = supabase.from('products').select('*')
-        
+
         if (params?.active !== undefined) {
           query = query.eq('is_active', params.active)
         }
-        
+
         if (params?.category) {
           query = query.eq('category', params.category)
         }
-        
+
         if (params?.search) {
           query = query.or(`name.ilike.%${params.search}%,description.ilike.%${params.search}%`)
         }
-        
+
         if (params?.limit) {
           const offset = ((params?.page || 1) - 1) * params.limit
           query = query.range(offset, offset + params.limit - 1)
         }
-        
+
         const { data, error } = await query.order('created_at', { ascending: false })
+
+        // If table doesn't exist, fall back to mock data
+        if (error && error.code === 'PGRST116') {
+          console.warn('Products table not found, using mock data. Please run the database schema.')
+          let filteredProducts = mockProducts
+
+          if (params?.active !== undefined) {
+            filteredProducts = filteredProducts.filter(p => p.is_active === params.active)
+          }
+
+          if (params?.category) {
+            filteredProducts = filteredProducts.filter(p => p.category === params.category)
+          }
+
+          if (params?.search) {
+            const searchTerm = params.search.toLowerCase()
+            filteredProducts = filteredProducts.filter(p =>
+              p.name.toLowerCase().includes(searchTerm) ||
+              p.description?.toLowerCase().includes(searchTerm)
+            )
+          }
+
+          if (params?.limit) {
+            const offset = ((params?.page || 1) - 1) * params.limit
+            filteredProducts = filteredProducts.slice(offset, offset + params.limit)
+          }
+
+          return formatResponse(filteredProducts)
+        }
+
         return formatResponse(data, error)
       } catch (error) {
         return formatResponse(null, error)
@@ -235,12 +265,23 @@ class SupabaseApiClient {
           .select('*')
           .eq('is_active', true)
           .order('created_at', { ascending: false })
-        
+
         if (limit) {
           query = query.limit(limit)
         }
-        
+
         const { data, error } = await query
+
+        // If table doesn't exist, fall back to mock data
+        if (error && error.code === 'PGRST116') {
+          console.warn('Products table not found, using mock data. Please run the database schema.')
+          let products = mockProducts.filter(p => p.is_active)
+          if (limit) {
+            products = products.slice(0, limit)
+          }
+          return formatResponse(products)
+        }
+
         return formatResponse(data, error)
       } catch (error) {
         return formatResponse(null, error)
@@ -342,16 +383,8 @@ class SupabaseApiClient {
 
     getStats: async (): Promise<ApiResponse<CompanyStats>> => {
       try {
-        const stats: CompanyStats = {
-          established: 1998,
-          incorporated: 2003,
-          citiesCovered: "10+",
-          workforce: "500+",
-          clientBase: "100+",
-          completedProjects: "1000+"
-        }
-        
-        return formatResponse(stats)
+        // For now, always return mock data since this is company info
+        return formatResponse(mockCompanyStats)
       } catch (error) {
         return formatResponse(null, error)
       }
