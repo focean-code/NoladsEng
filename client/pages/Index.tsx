@@ -46,6 +46,7 @@ import { Service, Product } from "../../shared/api";
 import { testimonials } from "../data/testimonials";
 import { toast } from "sonner";
 import { getSocket } from "../lib/socket";
+import { api } from "../lib/api";
 
 export default function Index() {
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
@@ -110,10 +111,9 @@ export default function Index() {
   // API fetch functions
   const fetchServices = async () => {
     try {
-      const response = await fetch('/api/services?featured=true&limit=4');
-      const data = await response.json();
-      if (data.success) {
-        setServices(data.data || []);
+      const response = await api.services.getFeatured(4);
+      if (response.success) {
+        setServices(response.data || []);
       }
     } catch (error) {
       console.error('Error fetching services:', error);
@@ -123,10 +123,9 @@ export default function Index() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch('/api/products?featured=true&limit=8');
-      const data = await response.json();
-      if (data.success) {
-        setProducts(data.data || []);
+      const response = await api.products.getFeatured(8);
+      if (response.success) {
+        setProducts(response.data || []);
       }
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -137,10 +136,9 @@ export default function Index() {
 
   const fetchCompanyStats = async () => {
     try {
-      const response = await fetch('/api/company/stats');
-      const data = await response.json();
-      if (data.success) {
-        setCompanyStats(data.data);
+      const response = await api.company.getStats();
+      if (response.success) {
+        setCompanyStats(response.data);
       }
     } catch (error) {
       console.error('Error fetching company stats:', error);
