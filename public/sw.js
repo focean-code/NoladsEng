@@ -17,13 +17,7 @@ const STATIC_FILES = [
   '/client/global.css',
 ];
 
-// API routes to cache
-const API_ROUTES = [
-  '/api/services',
-  '/api/products',
-  '/api/testimonials',
-  '/api/company/info',
-];
+// Note: API routes now handled by Supabase, no local /api caching needed
 
 // Install event - cache static files
 self.addEventListener('install', (event) => {
@@ -82,9 +76,6 @@ self.addEventListener('fetch', (event) => {
   if (url.pathname === '/') {
     // Homepage - cache first, then network
     event.respondWith(cacheFirst(request));
-  } else if (url.pathname.startsWith('/api/')) {
-    // API requests - network first, then cache
-    event.respondWith(networkFirst(request));
   } else if (url.pathname.startsWith('/uploads/')) {
     // Uploaded files - cache first, then network
     event.respondWith(cacheFirst(request));
